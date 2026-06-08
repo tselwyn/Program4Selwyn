@@ -46,10 +46,10 @@ void Sprite::UpdateSprites(int width, int height, int dir)
 	animationDirection = dir;
 
 	// move in the direction pressed
-	if (dir == 0) y += 15;
-	else if (dir == 1) x -= 15;
-	else if (dir == 2) y -= 15;
-	else if (dir == 3) x += 15;
+	if (dir == 0) y += 20;
+	else if (dir == 1) x -= 20;
+	else if (dir == 2) y -= 20;
+	else if (dir == 3) x += 20;
 
 	// cycle walk animation
 	if (++frameCount > frameDelay)

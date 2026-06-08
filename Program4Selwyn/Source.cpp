@@ -38,6 +38,7 @@ int main(void)
 	// level tracking
 	int level = 1;
 	bool levelOver = false;
+	bool gameWon = false;
 	char mapName[64];
 
 	ALLEGRO_DISPLAY* display = NULL;
@@ -89,6 +90,13 @@ int main(void)
 				secondsLeft--;
 			}
 
+			// time ran out
+			if (secondsLeft <= 0)
+			{
+				done = true;
+				gameWon = false;
+			}
+
 			// move player based on which arrow is held
 			if (keys[UP])
 				player.UpdateSprites(WIDTH, HEIGHT, 2);
@@ -111,6 +119,7 @@ int main(void)
 				{
 					// beat all 3 levels
 					done = true;
+					gameWon = true;
 				}
 				else
 				{
@@ -200,6 +209,28 @@ int main(void)
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}
 	}
+
+	// end screen
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+
+	if (gameWon)
+	{
+		al_draw_text(font, al_map_rgb(0, 255, 0), WIDTH / 2, HEIGHT / 2 - 40,
+			ALLEGRO_ALIGN_CENTER, "You Win!");
+		al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2 + 10,
+			ALLEGRO_ALIGN_CENTER, "You made it through all 3 levels!");
+	}
+	else
+	{
+		sprintf_s(timerText, "You made it to level %d", level);
+		al_draw_text(font, al_map_rgb(255, 0, 0), WIDTH / 2, HEIGHT / 2 - 40,
+			ALLEGRO_ALIGN_CENTER, "Time's Up!");
+		al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2 + 10,
+			ALLEGRO_ALIGN_CENTER, timerText);
+	}
+
+	al_flip_display();
+	al_rest(5.0);
 
 	MapFreeMem();
 	al_destroy_font(font);
