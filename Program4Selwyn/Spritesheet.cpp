@@ -20,13 +20,13 @@ void Sprite::InitSprites(int width, int height)
 	x = 80;
 	y = 80;
 
-	maxFrame = 4;
+	maxFrame = 8;
 	curFrame = 0;
 	frameCount = 0;
 	frameDelay = 6;
-	frameWidth = 60;
+	frameWidth = 30;
 	frameHeight = 56;
-	animationColumns = 4;
+	animationColumns = 8;
 	animationDirection = 0; // facing down
 
 	image = al_load_bitmap("player.bmp");
@@ -46,10 +46,10 @@ void Sprite::UpdateSprites(int width, int height, int dir)
 	animationDirection = dir;
 
 	// move in the direction pressed
-	if (dir == 0) y += 8;
-	else if (dir == 1) x -= 8;
-	else if (dir == 2) y -= 8;
-	else if (dir == 3) x += 8;
+	if (dir == 0) y += 15;
+	else if (dir == 1) x -= 15;
+	else if (dir == 2) y -= 15;
+	else if (dir == 3) x += 15;
 
 	// cycle walk animation
 	if (++frameCount > frameDelay)
@@ -60,10 +60,10 @@ void Sprite::UpdateSprites(int width, int height, int dir)
 	}
 
 	// collision box pulled in so we fit through corridors
-	int left = x + 5;
-	int right = x + frameWidth - 5;
-	int top = y + 5;
-	int bottom = y + frameHeight - 5;
+	int left = x + 4;
+	int right = x + frameWidth - 4;
+	int top = y + 8;
+	int bottom = y + frameHeight - 4;
 
 	// undo move if any corner hits a wall
 	if (collided(left, top) || collided(right, top) ||
@@ -95,7 +95,15 @@ void Sprite::DrawSprites(int xoffset, int yoffset)
 {
 	int fx = curFrame * frameWidth;
 	int fy = animationDirection * frameHeight;
+	int flags = 0;
+
+	// right uses left sprites flipped horizontally
+	if (animationDirection == 3)
+	{
+		fy = 1 * frameHeight;
+		flags = ALLEGRO_FLIP_HORIZONTAL;
+	}
 
 	al_draw_bitmap_region(image, fx, fy, frameWidth, frameHeight,
-		x - xoffset, y - yoffset, 0);
+		x - xoffset, y - yoffset, flags);
 }
