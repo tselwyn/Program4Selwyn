@@ -30,10 +30,15 @@ int main(void)
 
 	Sprite player;
 
-	// timer countdown stuff
+	// timer countdown
 	int frameCounter = 0;
 	int secondsLeft = 60;
 	char timerText[32];
+
+	// level tracking
+	int level = 1;
+	bool levelOver = false;
+	char mapName[64];
 
 	ALLEGRO_DISPLAY* display = NULL;
 	ALLEGRO_EVENT_QUEUE* event_queue = NULL;
@@ -53,7 +58,8 @@ int main(void)
 	font = al_load_font("JA.TTF", 24, 0);
 	player.InitSprites(WIDTH, HEIGHT);
 
-	char mapName[] = "map1.FMP";
+	// load first map
+	sprintf_s(mapName, "map%d.FMP", level);
 	if (MapLoad(mapName, 1)) return -5;
 
 	event_queue = al_create_event_queue();
@@ -94,6 +100,30 @@ int main(void)
 				player.UpdateSprites(WIDTH, HEIGHT, 3);
 			else
 				player.UpdateSprites(WIDTH, HEIGHT, 4); // idle
+
+			// check if player reached the exit tile
+			levelOver = player.CollisionEndBlock();
+
+			if (levelOver)
+			{
+				level++;
+				if (level > 3)
+				{
+					// beat all 3 levels
+					done = true;
+				}
+				else
+				{
+					// load next map and reset everything
+					MapFreeMem();
+					sprintf_s(mapName, "map%d.FMP", level);
+					if (MapLoad(mapName, 1)) return -5;
+					player.ResetPosition();
+					secondsLeft = 60;
+					frameCounter = 0;
+					levelOver = false;
+				}
+			}
 
 			render = true;
 		}
@@ -160,9 +190,11 @@ int main(void)
 			MapDrawFG(xOff, yOff, 0, 0, WIDTH - 1, HEIGHT - 1, 0);
 			player.DrawSprites(xOff, yOff);
 
-			// draw timer in top left
+			// draw timer and level info
 			sprintf_s(timerText, "Time: %d", secondsLeft);
 			al_draw_text(font, al_map_rgb(255, 255, 255), 10, 10, 0, timerText);
+			sprintf_s(timerText, "Level: %d", level);
+			al_draw_text(font, al_map_rgb(255, 255, 255), 10, 40, 0, timerText);
 
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));

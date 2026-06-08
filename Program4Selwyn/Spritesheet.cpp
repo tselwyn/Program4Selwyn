@@ -82,6 +82,15 @@ bool Sprite::CollisionEndBlock()
 	return false;
 }
 
+// put player back at the starting spot for new level
+void Sprite::ResetPosition()
+{
+	x = 80;
+	y = 80;
+	curFrame = 0;
+	animationDirection = 0;
+}
+
 void Sprite::DrawSprites(int xoffset, int yoffset)
 {
 	int fx = curFrame * frameWidth;
