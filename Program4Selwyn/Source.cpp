@@ -13,12 +13,19 @@
 #include <iostream>
 using namespace std;
 
+int collided(int x, int y);
+bool endValue(int x, int y);
+
 int main(void)
 {
 	const int WIDTH = 800;
 	const int HEIGHT = 600;
 	bool done = false;
 	bool render = false;
+
+	// arrow key tracking
+	bool keys[] = { false, false, false, false };
+	enum KEYS { UP, DOWN, LEFT, RIGHT };
 
 	Sprite player;
 
@@ -62,6 +69,18 @@ int main(void)
 
 		if (ev.type == ALLEGRO_EVENT_TIMER)
 		{
+			// move player based on which arrow is held
+			if (keys[UP])
+				player.UpdateSprites(WIDTH, HEIGHT, 2);
+			else if (keys[DOWN])
+				player.UpdateSprites(WIDTH, HEIGHT, 0);
+			else if (keys[LEFT])
+				player.UpdateSprites(WIDTH, HEIGHT, 1);
+			else if (keys[RIGHT])
+				player.UpdateSprites(WIDTH, HEIGHT, 3);
+			else
+				player.UpdateSprites(WIDTH, HEIGHT, 4); // idle
+
 			render = true;
 		}
 		else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -70,8 +89,42 @@ int main(void)
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
-			if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+			switch (ev.keyboard.keycode)
+			{
+			case ALLEGRO_KEY_ESCAPE:
 				done = true;
+				break;
+			case ALLEGRO_KEY_UP:
+				keys[UP] = true;
+				break;
+			case ALLEGRO_KEY_DOWN:
+				keys[DOWN] = true;
+				break;
+			case ALLEGRO_KEY_LEFT:
+				keys[LEFT] = true;
+				break;
+			case ALLEGRO_KEY_RIGHT:
+				keys[RIGHT] = true;
+				break;
+			}
+		}
+		else if (ev.type == ALLEGRO_EVENT_KEY_UP)
+		{
+			switch (ev.keyboard.keycode)
+			{
+			case ALLEGRO_KEY_UP:
+				keys[UP] = false;
+				break;
+			case ALLEGRO_KEY_DOWN:
+				keys[DOWN] = false;
+				break;
+			case ALLEGRO_KEY_LEFT:
+				keys[LEFT] = false;
+				break;
+			case ALLEGRO_KEY_RIGHT:
+				keys[RIGHT] = false;
+				break;
+			}
 		}
 
 		if (render && al_is_event_queue_empty(event_queue))
@@ -104,4 +157,22 @@ int main(void)
 	al_destroy_event_queue(event_queue);
 	al_destroy_display(display);
 	return 0;
+}
+
+// check if a tile is solid
+int collided(int x, int y)
+{
+	BLKSTR* blockdata;
+	blockdata = MapGetBlock(x / mapblockwidth, y / mapblockheight);
+	return blockdata->tl;
+}
+
+// check if tile is the level exit
+bool endValue(int x, int y)
+{
+	BLKSTR* data;
+	data = MapGetBlock(x / mapblockwidth, y / mapblockheight);
+	if (data->user1 == 8)
+		return true;
+	return false;
 }

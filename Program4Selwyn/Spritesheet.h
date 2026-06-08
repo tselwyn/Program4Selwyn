@@ -11,13 +11,20 @@
 #include <iostream>
 using namespace std;
 
+int collided(int x, int y);
+bool endValue(int x, int y);
+
 class Sprite
 {
+	friend int collided(int x, int y);
+	friend bool endValue(int x, int y);
 public:
 	Sprite();
 	~Sprite();
 	void InitSprites(int width, int height);
+	void UpdateSprites(int width, int height, int dir); // 0=down 1=left 2=up 3=right 4=idle
 	void DrawSprites(int xoffset, int yoffset);
+	bool CollisionEndBlock();
 	float getX() { return x; }
 	float getY() { return y; }
 	int getWidth() { return frameWidth; }
@@ -33,7 +40,7 @@ private:
 	int frameWidth;
 	int frameHeight;
 	int animationColumns;
-	int animationDirection;
+	int animationDirection; // 0=down, 1=left, 2=up, 3=right
 
 	ALLEGRO_BITMAP* image;
 };

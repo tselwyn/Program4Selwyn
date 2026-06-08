@@ -33,6 +33,55 @@ void Sprite::InitSprites(int width, int height)
 	al_convert_mask_to_alpha(image, al_map_rgb(255, 0, 255));
 }
 
+void Sprite::UpdateSprites(int width, int height, int dir)
+{
+	if (dir == 4) // standing still
+	{
+		curFrame = 0;
+		return;
+	}
+
+	int oldx = x;
+	int oldy = y;
+	animationDirection = dir;
+
+	// move in the direction pressed
+	if (dir == 0) y += 4;
+	else if (dir == 1) x -= 4;
+	else if (dir == 2) y -= 4;
+	else if (dir == 3) x += 4;
+
+	// cycle walk animation
+	if (++frameCount > frameDelay)
+	{
+		frameCount = 0;
+		if (++curFrame >= maxFrame)
+			curFrame = 0;
+	}
+
+	// collision box pulled in so we fit through corridors
+	int left = x + 3;
+	int right = x + frameWidth - 3;
+	int top = y + 3;
+	int bottom = y + frameHeight - 3;
+
+	// undo move if any corner hits a wall
+	if (collided(left, top) || collided(right, top) ||
+		collided(left, bottom) || collided(right, bottom))
+	{
+		x = oldx;
+		y = oldy;
+	}
+}
+
+bool Sprite::CollisionEndBlock()
+{
+	// check middle of sprite for exit tile
+	if (endValue(x + frameWidth / 2, y + frameHeight / 2))
+		return true;
+	return false;
+}
+
 void Sprite::DrawSprites(int xoffset, int yoffset)
 {
 	int fx = curFrame * frameWidth;
