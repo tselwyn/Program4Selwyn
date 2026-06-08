@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Program4Selwyn.vcxproj" />
+  <Project Path="Program4Selwyn.vcxproj" Id="e69597ab-3532-4494-a5f2-2572336e1f6e" />
 </Solution>
