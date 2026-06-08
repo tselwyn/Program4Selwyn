@@ -10,6 +10,7 @@
 #include <allegro5/allegro_ttf.h>
 #include "SpriteSheet.h"
 #include "mappy_A5.h"
+#include <cstdio>
 #include <iostream>
 using namespace std;
 
@@ -28,6 +29,11 @@ int main(void)
 	enum KEYS { UP, DOWN, LEFT, RIGHT };
 
 	Sprite player;
+
+	// timer countdown stuff
+	int frameCounter = 0;
+	int secondsLeft = 60;
+	char timerText[32];
 
 	ALLEGRO_DISPLAY* display = NULL;
 	ALLEGRO_EVENT_QUEUE* event_queue = NULL;
@@ -69,6 +75,14 @@ int main(void)
 
 		if (ev.type == ALLEGRO_EVENT_TIMER)
 		{
+			// count frames for the countdown
+			frameCounter++;
+			if (frameCounter >= 60)
+			{
+				frameCounter = 0;
+				secondsLeft--;
+			}
+
 			// move player based on which arrow is held
 			if (keys[UP])
 				player.UpdateSprites(WIDTH, HEIGHT, 2);
@@ -145,6 +159,10 @@ int main(void)
 			MapDrawBG(xOff, yOff, 0, 0, WIDTH - 1, HEIGHT - 1);
 			MapDrawFG(xOff, yOff, 0, 0, WIDTH - 1, HEIGHT - 1, 0);
 			player.DrawSprites(xOff, yOff);
+
+			// draw timer in top left
+			sprintf_s(timerText, "Time: %d", secondsLeft);
+			al_draw_text(font, al_map_rgb(255, 255, 255), 10, 10, 0, timerText);
 
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
