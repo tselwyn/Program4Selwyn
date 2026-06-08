@@ -24,8 +24,8 @@ void Sprite::InitSprites(int width, int height)
 	curFrame = 0;
 	frameCount = 0;
 	frameDelay = 6;
-	frameWidth = 30;
-	frameHeight = 28;
+	frameWidth = 60;
+	frameHeight = 56;
 	animationColumns = 4;
 	animationDirection = 0; // facing down
 
@@ -46,10 +46,10 @@ void Sprite::UpdateSprites(int width, int height, int dir)
 	animationDirection = dir;
 
 	// move in the direction pressed
-	if (dir == 0) y += 4;
-	else if (dir == 1) x -= 4;
-	else if (dir == 2) y -= 4;
-	else if (dir == 3) x += 4;
+	if (dir == 0) y += 8;
+	else if (dir == 1) x -= 8;
+	else if (dir == 2) y -= 8;
+	else if (dir == 3) x += 8;
 
 	// cycle walk animation
 	if (++frameCount > frameDelay)
@@ -60,10 +60,10 @@ void Sprite::UpdateSprites(int width, int height, int dir)
 	}
 
 	// collision box pulled in so we fit through corridors
-	int left = x + 3;
-	int right = x + frameWidth - 3;
-	int top = y + 3;
-	int bottom = y + frameHeight - 3;
+	int left = x + 5;
+	int right = x + frameWidth - 5;
+	int top = y + 5;
+	int bottom = y + frameHeight - 5;
 
 	// undo move if any corner hits a wall
 	if (collided(left, top) || collided(right, top) ||
